@@ -2,11 +2,22 @@ jdk:
   - openjdk17
 
 before_install:
+  # local.properties (SDK)
   - bash -lc 'set -euxo pipefail; cd android; echo "sdk.dir=/opt/android-sdk-linux" > local.properties'
+
+  # Install NDK that matches core/build.gradle (26.2.11394342)
+  - bash -lc 'set -euxo pipefail; yes | /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses'
+  - bash -lc 'set -euxo pipefail; /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "ndk;26.2.11394342"'
+
+  # Make NDK discoverable for cargo-ndk
+  - bash -lc 'set -euxo pipefail; echo "ndk.dir=/opt/android-sdk-linux/ndk/26.2.11394342" >> android/local.properties'
+  - bash -lc 'set -euxo pipefail; echo "export ANDROID_NDK_HOME=/opt/android-sdk-linux/ndk/26.2.11394342" >> ~/.bashrc'
+  - bash -lc 'set -euxo pipefail; export ANDROID_NDK_HOME=/opt/android-sdk-linux/ndk/26.2.11394342; test -d "$ANDROID_NDK_HOME"'
+
+  # Rust + cargo-ndk
   - bash -lc 'set -euxo pipefail; curl https://sh.rustup.rs -sSf | sh -s -- -y'
-  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cargo --version; rustup --version'
   - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android'
-  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cargo install cargo-ndk --locked; cargo ndk --version || true'
+  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cargo install cargo-ndk --locked'
 
 install:
-  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cd android; ./gradlew :core:assemble :maplibreui:assemble :composeui:assemble :google-play-services:assemble -xtest -xlint'
+  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; export ANDROID_NDK_HOME=/opt/android-sdk-linux/ndk/26.2.11394342; cd android; ./gradlew :core:assemble :maplibreui:assemble :composeui:assemble :google-play-services:assemble -xtest -xlint'
