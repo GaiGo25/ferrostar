@@ -1,0 +1,19 @@
+jdk:
+  - openjdk17
+
+before_install:
+  # Rust/Cargo installieren
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - export PATH="$HOME/.cargo/bin:$PATH"
+  - cargo --version
+
+  # Android targets (optional aber sinnvoll)
+  - rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+  # cargo-ndk (falls benötigt)
+  - cargo install cargo-ndk --locked
+  - cargo ndk --version || true
+
+install:
+  # Wichtig: wir sind bereits im ./android root
+  - ./gradlew clean -xtest -xlint assemble
