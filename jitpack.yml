@@ -8,4 +8,4 @@ before_install:
   - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cargo install cargo-ndk --locked; cargo ndk --version || true'
 
 install:
-  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cd android; ./gradlew clean -xtest -xlint assemble'
+  - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cd android; ./gradlew :core:assemble :maplibreui:assemble :composeui:assemble :google-play-services:assemble -xtest -xlint'
