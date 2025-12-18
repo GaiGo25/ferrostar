@@ -78,6 +78,10 @@ fun DynamicallyOrientingNavigationView(
     mapViewInsets: MutableState<PaddingValues> = remember { mutableStateOf(PaddingValues(0.dp)) },
     routeOverlayBuilder: RouteOverlayBuilder = RouteOverlayBuilder.Default(),
     onTapExit: (() -> Unit)? = null,
+
+    onTapGestureCallback: ((MapGestureContext) -> Unit)? = null,
+
+    onLongPressGestureCallback: ((MapGestureContext) -> Unit)? = null,
     mapContent: @Composable @MapLibreComposable ((NavigationUiState) -> Unit)? = null,
 ) {
   val orientation = LocalConfiguration.current.orientation
@@ -102,6 +106,8 @@ fun DynamicallyOrientingNavigationView(
         mapControls = mapControls,
         locationRequestProperties = locationRequestProperties,
         routeOverlayBuilder = routeOverlayBuilder,
+        onTapGestureCallback = onTapGestureCallback,
+        onLongPressGestureCallback = onLongPressGestureCallback,
         content = mapContent)
 
     if (uiState.isNavigating()) {
