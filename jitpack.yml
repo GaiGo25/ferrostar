@@ -2,6 +2,7 @@ jdk:
   - openjdk17
 
 before_install:
+  - bash -lc 'set -euxo pipefail; cd android; echo "sdk.dir=/opt/android-sdk-linux" > local.properties'
   - bash -lc 'set -euxo pipefail; curl https://sh.rustup.rs -sSf | sh -s -- -y'
   - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; cargo --version; rustup --version'
   - bash -lc 'set -euxo pipefail; export PATH="$HOME/.cargo/bin:$PATH"; rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android'
